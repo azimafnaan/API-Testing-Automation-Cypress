@@ -1,23 +1,33 @@
-
-
-
 /// < reference types = "Cypress" />
 
-describe('Get API User Test', () => {
-    it('Get User', () => {
+describe('Get API in test', () => {
+    let accessToken = 'cd5228314a8258bd10018e768243f90c4a660aea53d0677be292373dc83485c3'
 
-        let accessToken = '35ea206f950a7b416f21e2eeef754c73f37f2fa8f01d4212146856c7249482cb'
-
+    it('Get User test', () => {
         cy.request({
             method: 'GET',
-            url: 'https://gorest.co.in/public/v2/users/3936',
+            url: 'https://gorest.co.in/public/v2/users/',
             headers: {
                 'authorization': "Bearer" + accessToken
             }
         }).then((res) => {
             expect(res.status).to.eq(200)
-            expect(res.body.gender).to.eq('female')
+
 
         })
+    })
+
+    it('get user id', () => {
+        cy.request({
+            method: 'GET',
+            url: 'https://gorest.co.in/public/v2/users/3023',
+            headers: {
+                'Authorization': 'Bearer ' + accessToken
+            }
+        }).then((res) => {
+            expect(res.status).to.eq(200)
+            expect(res.body.gender).to.eq('female')
+        })
+
     })
 })
