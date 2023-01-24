@@ -13,24 +13,43 @@ describe('Create user api test', () => {
             randomText += pattern.charAt(Math.floor(Math.random() * pattern.length))
             testEmail = randomText + '@gmail.com'
         }
-        cy.request({
-            method: 'POST',
-            url: 'https://gorest.co.in/public/v2/users',
-            headers: {
-                'Authorization': 'Bearer ' + accessToken
-            },
-            body: {
-                "name": jsonData.name,
-                "email": testEmail,
-                "gender": jsonData.gender,
-                "status": jsonData.status
-            }
-        }).then((res) => {
-            cy.log(JSON.stringify(res.body))
-            expect(res.status).to.equal(201)
-            expect(res.body).has.property('email', testEmail)
-            expect(res.body).has.property('name', jsonData.name)
+        cy.fixture('createUser').then((payload) => {
+            //Create User(POST)
+            cy.request({
+                method: 'POST',
+                url: 'https://gorest.co.in/public/v2/users',
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken
+                },
+                body: {
+                    "name": payload.name,
+                    "email": testEmail,
+                    "gender": payload.gender,
+                    "status": payload.status
+                }
+            }).then((res) => {
+                cy.log(JSON.stringify(res.body))
+                expect(res.status).to.equal(201)
+                expect(res.body).has.property('email', testEmail)
+                expect(res.body).has.property('name', payload.name)
 
+            }).then((res) => {
+
+                const id = res.body.id
+                cy.request({
+                    method: 'GET',
+                    url: 'https://gorest.co.in/public/v2/users/' + id,
+                    headers: {
+                        'Authorization': 'Bearer ' + accessToken
+                    },
+                })
+
+            }).then((res) => {
+                expect(res.status).to.equal(200)
+                expect(res.body).has.property('id', userId)
+                expect(res.body).has.property('email', testEmail)
+                expect(res.body).has.property('name', payload.name)
+            })
         })
     })
 })
